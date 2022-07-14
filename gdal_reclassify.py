@@ -2,9 +2,11 @@
 import sys
 import optparse
 from osgeo import gdal
-from gdalconst import *
 import numpy as np
 import operator
+
+from osgeo.gdalconst import *
+
 gdal.AllRegister()
 
 
@@ -110,7 +112,7 @@ def processDataset(infile, outfile, classes, reclasses, default, nodata, output_
     np_dtype, gdal_dtype, out_classes = parseOutClasses(reclasses, default)
     src_ds = gdal.Open(infile)
     if src_ds is None:
-        print 'Could not open image'
+        print('Could not open image')
         sys.exit(1)
     rows, cols = src_ds.RasterYSize, src_ds.RasterXSize
     transform = src_ds.GetGeoTransform()
@@ -144,7 +146,7 @@ def processDataset(infile, outfile, classes, reclasses, default, nodata, output_
     dst_ds.SetGeoTransform(transform)
     if nodata in ["True", "true", "t", "T", "yes", "Yes", "Y", "y"]:
         out_band.SetNoDataValue(default)
-        print 'setting', default, 'as no data value'
+        print('setting', default, 'as no data value')
     out_band.GetStatistics(0, 1)
     dst_ds.SetProjection(proj)
     src_ds = None
@@ -179,13 +181,13 @@ def main():
     default = options.default
     compression = [options.compress_method]
     if default == False:
-        print "Default value not specified. Input values that do not meet any reclass conditions will be 0. GDAL will set nodata value."
+        print("Default value not specified. Input values that do not meet any reclass conditions will be 0. GDAL will set nodata value.")
     if default != False and len(nodata) == 0:
-        print "GDAL will set nodata value."
+        print("GDAL will set nodata value.")
     if len(in_classes) == len(out_classes):
         processDataset(src_file, dst_file, in_classes, out_classes, default, nodata, output_format, compression)
     else:
-        print "The number of conditions must equal the number of result classes."
+        print("The number of conditions must equal the number of result classes.")
 
 if __name__ == '__main__':
     main()
